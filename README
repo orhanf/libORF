@@ -1,0 +1,29 @@
+##################  libORF  - library On Random Fields ####################
+
+version 1.0 beta
+- Naive Bayes, Linear Regression, Logistic Regression, Softmax Regression, Linear Support Vector Machine, Non-Linear Support Vector Machine (with RBF kernel),
+Feed-forward Neural Network, Embedding Neural Network, Convolutional Neural Network, Sparse Autoencoders, Denoising Autoencoders, 
+Contractive Autoencoders, Stacked Sparse Autoencoders, Self-Taught Learner and Restricted Boltzmann Machines are tested with this version.
+- Rest of the methods are not tested hence not supplied and the progress is as follows: 	
+	+ Deep Belief Nets with Restricted Boltzmann Machines (not tested)
+	+ Bayes Nets (tested - refactoring)
+	+ Hidden Markov Models (tested - refactoring)
+	+ Conditional Random Fields (work in progress)
+
+PREREQUISITES
+- What you need is an optimizer function where minfunc (by Mark Schmidt) is included along with the toolbox
+http://www.di.ens.fr/~mschmidt/Software/minFunc.html
+- For running examples you need sample datasets which can be downloaded from the link below ~80mb. If the link is
+broken feel free to contact me. After downloading data archive, extract all the files into libORF/data/ folder.
+https://www.dropbox.com/s/kagevr66n69yhhm/data.rar
+
+USAGE:
+libORF is written using object oriented matlab, just instantiate and call appropriate methods.
+A full documentation is not supplied with this beta version, but the code is well commented.
+Please refer to example scripts for sample usage by simply calling run_<method>.m
+
+If you use libORF in your work, please cite the web-page: www.ceng.metu.edu.tr/~e1697481/libORF.html
+
+25 May 2014
+Orhan Firat
+orhan.firat@ceng.metu.edu.tr
