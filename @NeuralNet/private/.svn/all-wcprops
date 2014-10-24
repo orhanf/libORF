@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/libORF/!svn/ver/97/@NeuralNet/private
+END
+feedForwardNN.m
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/libORF/!svn/ver/104/@NeuralNet/private/feedForwardNN.m
+END
+neuralNetCost.m
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/libORF/!svn/ver/104/@NeuralNet/private/neuralNetCost.m
+END
+computeNumericalGradient.m
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/libORF/!svn/ver/97/@NeuralNet/private/computeNumericalGradient.m
+END
+nonLinearity.m
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/libORF/!svn/ver/104/@NeuralNet/private/nonLinearity.m
+END
+params2stack.m
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/libORF/!svn/ver/104/@NeuralNet/private/params2stack.m
+END
+stack2params.m
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/libORF/!svn/ver/104/@NeuralNet/private/stack2params.m
+END
+dNonLinearity.m
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/libORF/!svn/ver/104/@NeuralNet/private/dNonLinearity.m
+END
+neuralNetCostGPU.m
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/libORF/!svn/ver/102/@NeuralNet/private/neuralNetCostGPU.m
+END
