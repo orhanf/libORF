@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/libORF/!svn/ver/56/@StackedAutoencoder/private
+END
+params2stack.m
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/libORF/!svn/ver/5/@StackedAutoencoder/private/params2stack.m
+END
+stack2params.m
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/libORF/!svn/ver/5/@StackedAutoencoder/private/stack2params.m
+END
+stackedAECostSM.m
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/libORF/!svn/ver/56/@StackedAutoencoder/private/stackedAECostSM.m
+END
+stackedAEPredict.m
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/libORF/!svn/ver/5/@StackedAutoencoder/private/stackedAEPredict.m
+END
+stackedAECostSVM.m
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/libORF/!svn/ver/56/@StackedAutoencoder/private/stackedAECostSVM.m
+END
