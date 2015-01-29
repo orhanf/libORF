@@ -25,13 +25,13 @@ function [cost, grad] = softmaxCost(obj, theta, nClasses, nFeatures, lambda, x, 
     logProbs = log( probs );                        % log predictions    
     
     % regularization term for cost function
-    G = (0.5*lambda).*(norm(theta(:))^2) ./ m;   
+    G = (0.5*lambda).*(norm(theta(:))^2);   
     
     % calculate cost function
     cost = -(1/m) .* sum( y(:) .* logProbs(:) ) + G; 
     
     % calculate derivative
-    thetagrad = -(1/m) .*  (x * (y - probs)')' + (lambda .* thetagrad);
+    thetagrad = -(1/m) .*  (x * (y - probs)')' + (lambda .* theta);
            
     % Unroll the gradient matrices into a vector for minFunc
     grad = thetagrad(:);
