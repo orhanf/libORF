@@ -50,7 +50,8 @@ classdef LinearSVM < handle
             obj.silent   = false;
             obj.method   = 0;
             obj.addBias  = true;
-            
+            obj.lambdaL1 = 0;
+
             if nargin>0 && isstruct(options)
                 if isfield(options,'theta'),   obj.theta    = options.theta;   end
                 if isfield(options,'C'),       obj.C        = options.C;       end
