@@ -1,5 +1,5 @@
 function [cost,grad] = sparseAutoencoderLinearCost(obj, theta, visibleSize, hiddenSize, ...
-                                                        lambda, sparsityParam, beta, data)
+                                                        lambda, lambdaL1, sparsityParam, beta, data)
 % TODO : add function comments here
 %
 %
@@ -32,6 +32,9 @@ J_err = sum(squared_err(:)) / (2*nSamples);
 % Regularization term of the cost function
 J_reg = (lambda/2) .* ( sum(W1(:).^2) + sum(W2(:).^2));
 
+% L1 penalty for transition weights
+J_regL1 = (lambdaL1) * (sum(abs(W1(:))) + sum(abs(W2(:))) ) 
+
 % Sparsity term of the cost functin
 p_hat = mean(a2,2);
 p_hat(p_hat==1) = 1-eps;
@@ -40,7 +43,7 @@ p_hat(p_hat==0) = eps;
 J_spr = beta .* sum(KL(sparsityParam,p_hat));
 
 % Sum all the cost terms
-cost = J_err + J_reg + J_spr;
+cost = J_err + J_reg + J_spr + J_regL1;
 
 %%
 %==========================================================================
@@ -54,10 +57,10 @@ if nargout>1
     delta2 = bsxfun(@plus, W2' * delta3, beta_term) .*  dNonLinearity(a2,obj.hActFun);
 
     % Compute the desired partial derivatives
-    W2grad = (1/nSamples) * delta3 * a2' + ( lambda .* W2 );
+    W2grad = (1/nSamples) * delta3 * a2' + ( lambda .* W2 ) + (lambdaL1 .* sign(W2));
     b2grad = (1/nSamples) * sum(delta3,2);
 
-    W1grad = (1/nSamples) * delta2 * a1' + ( lambda .* W1 );
+    W1grad = (1/nSamples) * delta2 * a1' + ( lambda .* W1 ) + (lambdaL1 .* sign(W1));
     b1grad = (1/nSamples) * sum(delta2,2);
 
 

@@ -13,6 +13,7 @@ classdef SparseAutoencoder < handle
         % model parameters
         theta;         % parameter vector (vector) for gradient descent
         lambda;        % regularization (weight decay) parameter
+        lambdaL1;      % regularization (L1) parameter
         sparsityParam; % desired average activation of the hidden units
         beta;          % weight of sparsity penalty term
         visibleSize;   % number of input units
@@ -44,6 +45,7 @@ classdef SparseAutoencoder < handle
         function obj = SparseAutoencoder(options)
             
             obj.lambda   = 0.0001;
+            obj.lambdaL1 = 0.0;
             obj.beta     = 3;
             obj.sparsityParam =  0.01;
             obj.silent   = false;
@@ -62,6 +64,7 @@ classdef SparseAutoencoder < handle
             if nargin>0 && isstruct(options)
                 if isfield(options,'silent'),       obj.silent   = options.silent;              end
                 if isfield(options,'lambda'),       obj.lambda   = options.lambda;              end
+                if isfield(options,'lambdaL1'),     obj.lambdaL1 = options.lambdaL1;            end
                 if isfield(options,'beta'),         obj.beta     = options.beta;                end
                 if isfield(options,'sparsityParam'),obj.sparsityParam = options.sparsityParam;  end
                 if isfield(options,'visibleSize'),  obj.visibleSize   = options.visibleSize;    end
@@ -133,13 +136,13 @@ classdef SparseAutoencoder < handle
                 thetaTMP = obj.initializeParameters(obj.hiddenSize, obj.visibleSize);
                 
                 [~, grad] = obj.sparseAutoencoderCost(thetaTMP, obj.visibleSize, obj.hiddenSize, obj.lambda, ...
-                    obj.sparsityParam, obj.beta, obj.x);
+                    obj.lambdaL1, obj.sparsityParam, obj.beta, obj.x);
                 
                 
                 % Check cost function and derivative calculations
                 % for the sparse autoencoder.
                 numgrad = obj.computeNumericalGradient( @(x) obj.sparseAutoencoderCost(x, obj.visibleSize, ...
-                    obj.hiddenSize, obj.lambda, ...
+                    obj.hiddenSize, obj.lambda, obj.lambdaL1, ...
                     obj.sparsityParam, obj.beta, ...
                     obj.x), thetaTMP);
                 
@@ -266,12 +269,12 @@ classdef SparseAutoencoder < handle
             
             if obj.isLinearCost
                 [theta, cost] = obj.minfunc( @(p) obj.sparseAutoencoderLinearCost(p, obj.visibleSize, obj.hiddenSize, ...
-                    obj.lambda, obj.sparsityParam, obj.beta, obj.x), ...
+                    obj.lambda, obj.lambdaL1, obj.sparsityParam, obj.beta, obj.x), ...
                     obj.theta); % options must be passed to function handle as the 3rd parameter
                 
             else
                 [theta, cost] = obj.minfunc( @(p) obj.sparseAutoencoderCost(p, obj.visibleSize, obj.hiddenSize, ...
-                    obj.lambda, obj.sparsityParam, obj.beta, obj.x), ...
+                    obj.lambda, obj.lambdaL1, obj.sparsityParam, obj.beta, obj.x), ...
                     obj.theta); % options must be passed to function handle as the 3rd parameter
             end
             
@@ -331,10 +334,10 @@ classdef SparseAutoencoder < handle
                     % get cost and gradient for training data
                     if obj.isLinearCost
                         [trCostThis, grad] = obj.sparseAutoencoderLinearCost( obj.theta, obj.visibleSize, obj.hiddenSize, ...
-                            obj.lambda, obj.sparsityParam, obj.beta, obj.x(:, batchIdx));
+                            obj.lambda, obj.lambdaL1, obj.sparsityParam, obj.beta, obj.x(:, batchIdx));
                     else
                         [trCostThis, grad] = obj.sparseAutoencoderCost( obj.theta, obj.visibleSize, obj.hiddenSize, ...
-                            obj.lambda, obj.sparsityParam, obj.beta, obj.x(:, batchIdx));
+                            obj.lambda, obj.lambdaL1, obj.sparsityParam, obj.beta, obj.x(:, batchIdx));
                     end
                     
                     % update weights with momentum and lrate options
