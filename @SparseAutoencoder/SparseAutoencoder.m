@@ -393,14 +393,23 @@ classdef SparseAutoencoder < handle
         function opt = updateWeights(obj, opt, grad, iter)
             
             W1grad = reshape(grad(1:obj.hiddenSize*obj.visibleSize), obj.hiddenSize, obj.visibleSize);
-            W2grad = reshape(grad(obj.hiddenSize*obj.visibleSize+1:2*obj.hiddenSize*obj.visibleSize), obj.visibleSize, obj.hiddenSize);
-            b1grad = grad(2*obj.hiddenSize*obj.visibleSize+1:2*obj.hiddenSize*obj.visibleSize+obj.hiddenSize);
-            b2grad = grad(2*obj.hiddenSize*obj.visibleSize+obj.hiddenSize+1:end);
-            
             W1 = reshape(obj.theta(1:obj.hiddenSize*obj.visibleSize), obj.hiddenSize, obj.visibleSize);
-            W2 = reshape(obj.theta(obj.hiddenSize*obj.visibleSize+1:2*obj.hiddenSize*obj.visibleSize), obj.visibleSize, obj.hiddenSize);
-            b1 = obj.theta(2*obj.hiddenSize*obj.visibleSize+1:2*obj.hiddenSize*obj.visibleSize+obj.hiddenSize);
-            b2 = obj.theta(2*obj.hiddenSize*obj.visibleSize+obj.hiddenSize+1:end);
+
+            if obj.tied
+                b1grad = grad(obj.hiddenSize*obj.visibleSize+1:obj.hiddenSize*obj.visibleSize+obj.hiddenSize);
+                b2grad = grad(obj.hiddenSize*obj.visibleSize+obj.hiddenSize+1:end);
+                
+                b1 = obj.theta(obj.hiddenSize*obj.visibleSize+1:obj.hiddenSize*obj.visibleSize+obj.hiddenSize);
+                b2 = obj.theta(obj.hiddenSize*obj.visibleSize+obj.hiddenSize+1:end);
+            else
+                W2grad = reshape(grad(obj.hiddenSize*obj.visibleSize+1:2*obj.hiddenSize*obj.visibleSize), obj.visibleSize, obj.hiddenSize);
+                b1grad = grad(2*obj.hiddenSize*obj.visibleSize+1:2*obj.hiddenSize*obj.visibleSize+obj.hiddenSize);
+                b2grad = grad(2*obj.hiddenSize*obj.visibleSize+obj.hiddenSize+1:end);
+                
+                W2 = reshape(obj.theta(obj.hiddenSize*obj.visibleSize+1:2*obj.hiddenSize*obj.visibleSize), obj.visibleSize, obj.hiddenSize);
+                b1 = obj.theta(2*obj.hiddenSize*obj.visibleSize+1:2*obj.hiddenSize*obj.visibleSize+obj.hiddenSize);
+                b2 = obj.theta(2*obj.hiddenSize*obj.visibleSize+obj.hiddenSize+1:end);
+            end
             
             if obj.useAdaDelta
                 
