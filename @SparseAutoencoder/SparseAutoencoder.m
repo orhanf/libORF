@@ -169,18 +169,29 @@ classdef SparseAutoencoder < handle
             if nargin<2, vectorizeFlag = false; end
             
             W1StartIdx = 1;
-            W2StartIdx = obj.hiddenSize*obj.visibleSize+1;
-            b1StartIdx = W2StartIdx + obj.hiddenSize*obj.visibleSize;
-            b2StartIdx = b1StartIdx + obj.hiddenSize;
-            
-            params{1}.w = obj.theta(W1StartIdx:(W2StartIdx-1));
-            params{2}.w = obj.theta(W2StartIdx:(b1StartIdx-1));
-            
-            if ~vectorizeFlag
-                params{1}.w = reshape(params{1}.w,[obj.hiddenSize, obj.visibleSize]);
-                params{2}.w = reshape(params{2}.w,[obj.visibleSize,obj.hiddenSize]);
+
+            if obj.tied
+                b1StartIdx = W1StartIdx + obj.hiddenSize*obj.visibleSize;
+                b2StartIdx = b1StartIdx + obj.hiddenSize;
+                
+                params{1}.w = obj.theta(W1StartIdx:(W2StartIdx-1));
+                
+                if ~vectorizeFlag
+                    params{1}.w = reshape(params{1}.w,[obj.hiddenSize, obj.visibleSize]);
+                end
+            else 
+                W2StartIdx = obj.hiddenSize*obj.visibleSize+1;
+                b1StartIdx = W2StartIdx + obj.hiddenSize*obj.visibleSize;
+                b2StartIdx = b1StartIdx + obj.hiddenSize;
+                
+                params{1}.w = obj.theta(W1StartIdx:(W2StartIdx-1));
+                params{2}.w = obj.theta(W2StartIdx:(b1StartIdx-1));
+                
+                if ~vectorizeFlag
+                    params{1}.w = reshape(params{1}.w,[obj.hiddenSize, obj.visibleSize]);
+                    params{2}.w = reshape(params{2}.w,[obj.visibleSize,obj.hiddenSize]);
+                end
             end
-            
             params{1}.b = obj.theta(b1StartIdx:(b2StartIdx-1));
             params{2}.b = obj.theta(b2StartIdx:end);
             
@@ -194,7 +205,11 @@ classdef SparseAutoencoder < handle
             try
                 
                 W1 = reshape(obj.theta(1:obj.hiddenSize*obj.visibleSize), obj.hiddenSize, obj.visibleSize);
-                b1 = obj.theta(2*obj.hiddenSize*obj.visibleSize+1:2*obj.hiddenSize*obj.visibleSize+obj.hiddenSize);
+                if obj.tied
+                    b1 = obj.theta(obj.hiddenSize*obj.visibleSize+1:obj.hiddenSize*obj.visibleSize+obj.hiddenSize);
+                else
+                    b1 = obj.theta(2*obj.hiddenSize*obj.visibleSize+1:2*obj.hiddenSize*obj.visibleSize+obj.hiddenSize);
+                end
                                 
                 mappedData = nonLinearity(bsxfun(@plus, W1 * data, b1), obj.hActFun); 
                 

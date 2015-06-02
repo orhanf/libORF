@@ -11,7 +11,10 @@ b2 = zeros(visibleSize, 1);
 % Convert weights and bias gradients to the vector form.
 % This step will "unroll" (flatten and concatenate together) all 
 % your parameters into a vector, which can then be used with minFunc. 
-theta = [W1(:) ; W2(:) ; b1(:) ; b2(:)];
-
+if obj.tied
+    theta = [W1(:) ; b1(:) ; b2(:)];
+else
+    theta = [W1(:) ; W2(:) ; b1(:) ; b2(:)];
+end
 end
 

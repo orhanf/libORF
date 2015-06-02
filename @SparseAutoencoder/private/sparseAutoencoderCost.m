@@ -27,9 +27,14 @@ function [cost,grad] = sparseAutoencoderCost(obj, theta, visibleSize, hiddenSize
 
 % (starter code starts here) 
 W1 = reshape(theta(1:hiddenSize*visibleSize), hiddenSize, visibleSize);
-W2 = reshape(theta(hiddenSize*visibleSize+1:2*hiddenSize*visibleSize), visibleSize, hiddenSize);
-b1 = theta(2*hiddenSize*visibleSize+1:2*hiddenSize*visibleSize+hiddenSize);
-b2 = theta(2*hiddenSize*visibleSize+hiddenSize+1:end);
+if obj.tied
+    b1 = theta(hiddenSize*visibleSize+1:hiddenSize*visibleSize+hiddenSize);
+    b2 = theta(hiddenSize*visibleSize+hiddenSize+1:end);
+else
+    W2 = reshape(theta(hiddenSize*visibleSize+1:2*hiddenSize*visibleSize), visibleSize, hiddenSize);
+    b1 = theta(2*hiddenSize*visibleSize+1:2*hiddenSize*visibleSize+hiddenSize);
+    b2 = theta(2*hiddenSize*visibleSize+hiddenSize+1:end);
+end
 
 % Set W2 to zero if tied weights
 if obj.tied
@@ -119,8 +124,11 @@ if nargout>1
     % After computing the cost and gradient, we will convert the gradients back
     % to a vector format (suitable for minFunc).  Specifically, we will unroll
     % gradient matrices into a vector.
-
-    grad = [W1grad(:) ; W2grad(:) ; b1grad(:) ; b2grad(:)];
+    if obj.tied
+        grad = [W1grad(:) ; b1grad(:) ; b2grad(:)];
+    else
+        grad = [W1grad(:) ; W2grad(:) ; b1grad(:) ; b2grad(:)];
+    end
 end
 
 end
