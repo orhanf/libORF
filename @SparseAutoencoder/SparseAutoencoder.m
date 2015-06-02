@@ -397,42 +397,48 @@ classdef SparseAutoencoder < handle
                 opt.curr_speed_b1 = ((1-obj.momentum) * b1grad) + (obj.momentum * opt.curr_speed_b1);
                 opt.curr_speed_b2 = ((1-obj.momentum) * b2grad) + (obj.momentum * opt.curr_speed_b2);
                 opt.curr_speed_W1 = ((1-obj.momentum) * W1grad) + (obj.momentum * opt.curr_speed_W1);
-                opt.curr_speed_W2 = ((1-obj.momentum) * W2grad) + (obj.momentum * opt.curr_speed_W2);
                 
                 % accumulate gradients
                 opt.expectedGrads_b1 = (decay_rate * opt.expectedGrads_b1) +((1-decay_rate) * opt.curr_speed_b1.^2);
                 opt.expectedGrads_b2 = (decay_rate * opt.expectedGrads_b2) +((1-decay_rate) * opt.curr_speed_b2.^2);
                 opt.expectedGrads_W1 = (decay_rate * opt.expectedGrads_W1) +((1-decay_rate) * opt.curr_speed_W1.^2);
-                opt.expectedGrads_W2 = (decay_rate * opt.expectedGrads_W2) +((1-decay_rate) * opt.curr_speed_W2.^2);
                 
                 % compute update
                 delta_b1 = -opt.curr_speed_b1 .* (sqrt(opt.expectedDelta_b1 + tiny) ./ sqrt(opt.expectedGrads_b1 + tiny));
                 delta_b2 = -opt.curr_speed_b2 .* (sqrt(opt.expectedDelta_b2 + tiny) ./ sqrt(opt.expectedGrads_b2 + tiny));
                 delta_W1 = -opt.curr_speed_W1 .* (sqrt(opt.expectedDelta_W1 + tiny) ./ sqrt(opt.expectedGrads_W1 + tiny));
-                delta_W2 = -opt.curr_speed_W2 .* (sqrt(opt.expectedDelta_W2 + tiny) ./ sqrt(opt.expectedGrads_W2 + tiny));
                 
                 % accumulate updates
                 opt.expectedDelta_b1 = (decay_rate * opt.expectedDelta_b1) + ((1-decay_rate) * delta_b1.^2);
                 opt.expectedDelta_b2 = (decay_rate * opt.expectedDelta_b2) + ((1-decay_rate) * delta_b2.^2);
                 opt.expectedDelta_W1 = (decay_rate * opt.expectedDelta_W1) + ((1-decay_rate) * delta_W1.^2);
-                opt.expectedDelta_W2 = (decay_rate * opt.expectedDelta_W2) + ((1-decay_rate) * delta_W2.^2);
                 
                 % apply update
                 b1 = b1 + delta_b1;
                 b2 = b2 + delta_b2;
                 W1 = W1 + delta_W1;
-                W2 = W2 + delta_W2;
+
+                if ~obj.tied
+                    opt.curr_speed_W2 = ((1-obj.momentum) * W2grad) + (obj.momentum * opt.curr_speed_W2);
+                    opt.expectedGrads_W2 = (decay_rate * opt.expectedGrads_W2) +((1-decay_rate) * opt.curr_speed_W2.^2);
+                    delta_W2 = -opt.curr_speed_W2 .* (sqrt(opt.expectedDelta_W2 + tiny) ./ sqrt(opt.expectedGrads_W2 + tiny));
+                    opt.expectedDelta_W2 = (decay_rate * opt.expectedDelta_W2) + ((1-decay_rate) * delta_W2.^2);
+                    W2 = W2 + delta_W2;
+                end
                 
             else
                 % calculate momentum speed and update weights
                 opt.curr_speed_W1 = opt.curr_speed_W1 * obj.momentum - W1grad;
                 opt.curr_speed_b1 = opt.curr_speed_b1 * obj.momentum - b1grad;
                 opt.curr_speed_b2 = opt.curr_speed_b2 * obj.momentum - b2grad;
-                opt.curr_speed_W2 = opt.curr_speed_W2 * obj.momentum - W2grad;
                 W1 = W1 + opt.curr_speed_W1 * obj.alpha;
-                W2 = W2 + opt.curr_speed_W2 * obj.alpha;
                 b1 = b1 + opt.curr_speed_b1 * obj.alpha;
                 b2 = b2 + opt.curr_speed_b2 * obj.alpha;
+
+                if ~obj.tied
+                    opt.curr_speed_W2 = opt.curr_speed_W2 * obj.momentum - W2grad;
+                    W2 = W2 + opt.curr_speed_W2 * obj.alpha;
+                end
             end
             
             % actual update here

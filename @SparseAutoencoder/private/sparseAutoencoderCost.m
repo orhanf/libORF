@@ -33,7 +33,7 @@ b2 = theta(2*hiddenSize*visibleSize+hiddenSize+1:end);
 
 % Set W2 to zero if tied weights
 if obj.tied
-    W2 = zeros(size(W2, 1), size(W2, 2))  
+    W2 = zeros(size(W2, 1), size(W2, 2));
 end
 
 % (starter code ends here) ... orhanf
@@ -81,7 +81,7 @@ J_err = sum(squared_err(:)) / (2*nSamples);
 J_reg = (lambda/2) .* ( sum(W1(:).^2) + sum(W2(:).^2));
 
 % L1 penalty for transition weights
-J_regL1 = (lambdaL1) * (sum(abs(W1(:))) + sum(abs(W2(:))) ) 
+J_regL1 = (lambdaL1) * (sum(abs(W1(:))) + sum(abs(W2(:))) );
 
 % Sparsity term of the cost functin
 p_hat = mean(a2,2);
@@ -104,7 +104,7 @@ if nargout>1
     if obj.tied
         delta2 = bsxfun(@plus, W1 * delta3, beta_term) .* dNonLinearity(a2,obj.hActFun);
         W1grad = (1/nSamples) * ((a2 * delta3') + (delta2 * a1')) + ( lambda .* W1 ) + (lambdaL1 .* sign(W1));
-        W2grad = [] 
+        W2grad = []; 
     else
         delta2 = bsxfun(@plus, W2' * delta3, beta_term) .* dNonLinearity(a2,obj.hActFun);
         W1grad = (1/nSamples) * delta2 * a1' + ( lambda .* W1 ) + (lambdaL1 .* sign(W1));
