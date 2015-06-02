@@ -174,7 +174,7 @@ classdef SparseAutoencoder < handle
                 b1StartIdx = W1StartIdx + obj.hiddenSize*obj.visibleSize;
                 b2StartIdx = b1StartIdx + obj.hiddenSize;
                 
-                params{1}.w = obj.theta(W1StartIdx:(W2StartIdx-1));
+                params{1}.w = obj.theta(W1StartIdx:(b1StartIdx-1));
                 
                 if ~vectorizeFlag
                     params{1}.w = reshape(params{1}.w,[obj.hiddenSize, obj.visibleSize]);
