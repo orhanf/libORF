@@ -31,6 +31,11 @@ W2 = reshape(theta(hiddenSize*visibleSize+1:2*hiddenSize*visibleSize), visibleSi
 b1 = theta(2*hiddenSize*visibleSize+1:2*hiddenSize*visibleSize+hiddenSize);
 b2 = theta(2*hiddenSize*visibleSize+hiddenSize+1:end);
 
+% Set W2 to zero if tied weights
+if obj.tied
+    W2 = zeros(size(W2, 1), size(W2, 2))  
+end
+
 % (starter code ends here) ... orhanf
 
 %% ========================================================================
@@ -59,7 +64,13 @@ nSamples = size(data,2);
 a1 = data;                         % a1 is equal to inputs x
 z2 = bsxfun(@plus, W1 * a1, b1);   % z2 is weigted sum of a1
 a2 = nonLinearity(z2,obj.hActFun); % a2 is sigmoid output of z3
-z3 = bsxfun(@plus, W2 * a2 ,b2);   % z3 is weigted sum of a2
+
+if obj.tied
+    z3 = bsxfun(@plus, W1' * a2 ,b2);   % z3 is weigted sum of a2
+else
+    z3 = bsxfun(@plus, W2 * a2 ,b2);   % z3 is weigted sum of a2
+end
+
 a3 = nonLinearity(z3,0);           % a3 is equal to h
 
 % Squared error term of the cost function
@@ -87,15 +98,22 @@ if nargout>1
     % Compute delta for output layer 
     beta_term = beta .* ( - sparsityParam ./ p_hat  + ( 1-sparsityParam ) ./ ( 1 - p_hat ));
 
-    delta3 = -( data - a3 ) .* dNonLinearity(a3,0);
-    delta2 = bsxfun(@plus, W2' * delta3, beta_term) .* dNonLinearity(a2,obj.hActFun);
-
     % Compute the desired partial derivatives
-    W2grad = (1/nSamples) * delta3 * a2' + ( lambda .* W2 ) + (lambdaL1 .* sign(W2));
+    delta3 = -( data - a3 ) .* dNonLinearity(a3,0);
+    
+    if obj.tied
+        delta2 = bsxfun(@plus, W1 * delta3, beta_term) .* dNonLinearity(a2,obj.hActFun);
+        W1grad = (1/nSamples) * ((a2 * delta3') + (delta2 * a1')) + ( lambda .* W1 ) + (lambdaL1 .* sign(W1));
+        W2grad = [] 
+    else
+        delta2 = bsxfun(@plus, W2' * delta3, beta_term) .* dNonLinearity(a2,obj.hActFun);
+        W1grad = (1/nSamples) * delta2 * a1' + ( lambda .* W1 ) + (lambdaL1 .* sign(W1));
+        W2grad = (1/nSamples) * delta3 * a2' + ( lambda .* W2 ) + (lambdaL1 .* sign(W2));
+    end
+
+    b1grad = (1/nSamples) * sum(delta2,2);
     b2grad = (1/nSamples) * sum(delta3,2);
 
-    W1grad = (1/nSamples) * delta2 * a1' + ( lambda .* W1 ) + (lambdaL1 .* sign(W1));
-    b1grad = (1/nSamples) * sum(delta2,2);
 
     %-------------------------------------------------------------------
     % After computing the cost and gradient, we will convert the gradients back

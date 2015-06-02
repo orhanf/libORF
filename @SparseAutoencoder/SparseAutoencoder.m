@@ -33,6 +33,7 @@ classdef SparseAutoencoder < handle
         useAdaDelta;   % use adaptive delta to estimate learning rate
         adaDeltaRho;   % decay rate rho, for adadelta
         trErr;         % training error vector
+        tied;          % use tied weights, W1 == W2'
         
     end
     
@@ -51,6 +52,7 @@ classdef SparseAutoencoder < handle
             obj.silent   = false;
             obj.initFlag = true;
             obj.isLinearCost = false;
+            obj.tied = false;
             
             obj.hActFun      = 0;       % use sigmoid by default
             obj.nEpochs      = 100;
